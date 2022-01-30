@@ -2,6 +2,17 @@ import React from 'react'
 import Character from "./Character"
 import {fetchCharacters} from "../MarvelApp.service"
 import {ACTION_TYPES, dataReducer,FETCH_STATE,initialState} from "../reducer/DataReducer"
+import styled from "styled-components"
+import {Skeleton} from "@material-ui/lab"
+
+const StyledCharacterList = styled.div`
+display:flex;
+flex-wrap:wrap;
+gap:50px;
+justify-content:center;
+`
+
+
 
 const CharacterList = () =>{
     
@@ -29,16 +40,59 @@ const CharacterList = () =>{
        
     },[])
 if(fetching === FETCH_STATE.PENDING)
-return<h1>Loading...</h1>
+return(
+<StyledCharacterList>
+<Skeleton 
+animation="wave"
+variant="rect"
+width={300}
+height={450}
+/>
+<Skeleton 
+animation="wave"
+variant="rect"
+width={300}
+height={450}
+/>
+<Skeleton 
+animation="wave"
+variant="rect"
+width={300}
+height={450}
+/>
+<Skeleton 
+animation="wave"
+variant="rect"
+width={300}
+height={450}
+/>
+</StyledCharacterList>)
+{/* <h1>Loading...</h1> */}
 
 
 if(fetching=== FETCH_STATE.REJECTED)
 return<h1>{error}</h1>
 
     return (
-        <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-            <Character />
-        </div>
+<StyledCharacterList> 
+{characters && characters.length !== 0 ? (
+                characters.map(character => (
+                    <Character
+                        key={character.id}
+                        name={character.name}
+                        description={character.description}
+                        imageURL={character.imageURL}
+                        characterId={character.id}
+                    />
+                ))
+            ) : (
+                <h1>No Characters found</h1>
+            )}
+    
+    </StyledCharacterList>
+
+                   
+        
     )
 }
 

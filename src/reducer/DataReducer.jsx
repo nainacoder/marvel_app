@@ -36,7 +36,6 @@ switch(action.type){
                 fetching:FETCH_STATE.REJECTED,
                 error:"Error Fetching Data"
             }
-        break;
 
         default:
             return state

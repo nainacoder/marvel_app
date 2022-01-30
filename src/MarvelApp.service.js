@@ -1,26 +1,49 @@
+import axios from 'axios'
 
-import axios from "axios"
+export const fetchCharacters = async (characterName = '') => {
+    try {
+        let url;
+        if(characterName === '')
+            url = `http://gateway.marvel.com/v1/public/characters?ts=1&limit=50&apikey=${process.env.REACT_APP_MARVEL_API_KEY}&hash=${process.env.REACT_APP_MARVEL_API_MD5_HASH}`
+        else
+            url = `http://gateway.marvel.com/v1/public/characters?ts=1&limit=50&nameStartsWith=${characterName}&apikey=${process.env.REACT_APP_MARVEL_API_KEY}&hash=${process.env.REACT_APP_MARVEL_API_MD5_HASH}`
 
-//axios returns promise, to consume promise there are 2 ways--> .then and async await
-//async functionName
-//if it is normal function async is ahead of function else in arrow function  before brackets
-
-export const fetchCharacters = async ()=> {
-try{
-const response = await axios.get(`http://gateway.marvel.com/v1/public/characters?ts=1&limit=50&apikey=${process.env.REACT_APP_MARVEL_API_KEY}&hash=${process.env.REACT_APP_MARVEL_API_MD5_HASH}`)
-const characters = response?.data?.data?.results.map(character => ({
-    id: character.id,
-    name: character.name,
-    description: character.description,
-    imageURL: `${character.thumbnail.path}.jpg`,
-}))
-
-// console.log("Characters Data:", response)
-return characters
-
-
-}catch(error){
-    console.log("error Fetching Characters:", error)
-    return null
+        const response = await axios.get(url)
+        
+        const characters = response?.data?.data?.results.map(character => ({
+            id: character.id,
+            name: character.name,
+            description: character.description,
+            imageURL: `${character.thumbnail.path}.jpg`,
+        }))
+        // console.log("Characters Data: ", response)
+        console.log("Characters: ", characters)
+        return characters
+    } catch (error) {
+        console.error('Error fetching characters: ', error)
+        return null
+    }
 }
+
+export const fetchCharacterDetails = async characterId => {
+    try {
+        const response = await axios.get(
+            `http://gateway.marvel.com/v1/public/characters/${characterId}?ts=1&apikey=${process.env.REACT_APP_MARVEL_API_KEY}&hash=${process.env.REACT_APP_MARVEL_API_MD5_HASH}`
+        )
+
+        const details = response?.data?.data?.results[0]
+        const characterDetails = {
+            id: details.id,
+            name: details.name,
+            description: details.description,
+            imageURL: `${details.thumbnail.path}.jpg`,
+            comics: details.comics.items,
+        }
+
+        // console.log('Character details from API: ', details)
+        return characterDetails
+    } catch (err) {
+        console.error('Error fetching Marvel Character Details: ', err)
+        return null
+    }
 }
